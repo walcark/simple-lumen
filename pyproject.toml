@@ -1,23 +1,27 @@
 [project]
-authors = [{name = "walcark", email = "kevin.walcarius@cnes.fr"}]
-dependencies = []
 name = "simple-lumen"
-requires-python = ">= 3.11"
 version = "0.1.0"
+authors = [{ name = "walcark", email = "kevin.walcarius@cnes.fr" }]
+requires-python = ">=3.11"
+dependencies = []
 
 [build-system]
-build-backend = "hatchling.build"
 requires = ["hatchling"]
+build-backend = "hatchling.build"
 
+# ----------------------------------------------------------------------
+# Pixi workspace
+# ----------------------------------------------------------------------
 [tool.pixi.workspace]
 channels = ["conda-forge"]
 platforms = ["linux-64"]
 
-[tool.pixi.pypi-dependencies]
-simple_lumen = { path = ".", editable = true }
-
+# ----------------------------------------------------------------------
+# Base environment (runtime and GPU)
+# ----------------------------------------------------------------------
 [tool.pixi.dependencies]
 python = ">=3.11,<3.13"
+
 pydantic = ">=2.12.5,<3"
 xarray = ">=2026.1.0,<2027"
 numpy = ">=2.4.2,<3"
@@ -27,32 +31,50 @@ pip = ">=26.0.1,<27"
 tqdm = ">=4.67.3,<5"
 matplotlib = ">=3.9"
 
-[tool.pixi.feature.gpu]
-system-requirements = { cuda = "12.6" }
-dependencies = { cuda-version = "12.6.*", cuda-cudart-dev = "12.6.*", cuda-nvcc = "12.6.*" }
+cuda-version = "12.6.*"
+cuda-cudart-dev = "12.6.*"
+cuda-nvcc = "12.6.*"
+cuda-libraries-dev = "12.6.*"
 
-[tool.pixi.feature.dev.dependencies]
+[tool.pixi.pypi-dependencies]
+simple_lumen = { path = ".", editable = true }
+pycuda = "*"
+
+# ----------------------------------------------------------------------
+# Test environment
+# ----------------------------------------------------------------------
+[tool.pixi.feature.test.dependencies]
 pytest = ">=8.3"
 pytest-cov = ">=6.0"
 ruff = ">=0.11"
 pre-commit = ">=4.2"
 mypy = ">=1.5"
-scipy = "*"
 
+# ----------------------------------------------------------------------
+# Environments
+# ----------------------------------------------------------------------
 [tool.pixi.environments]
-gpu = ["gpu"]
-dev-gpu = ["dev", "gpu"]
+default = []
+test = ["test"]
 
-[tool.pixi.feature.dev.tasks]
+# ----------------------------------------------------------------------
+# Tasks
+# ----------------------------------------------------------------------
+[tool.pixi.feature.test.tasks]
 fmt = { cmd = "ruff format ." }
-lint = { cmd = "ruff check" }
-typecheck = { cmd = "mypy src/simple-lumen --strict" }
+lint = { cmd = "ruff check ." }
+typecheck = { cmd = "mypy src/simple_lumen/ --strict" }
 test = { cmd = "pytest tests/ --cov" }
+
 all = { depends-on = ["fmt", "lint", "typecheck", "test"] }
+
 ensure-pip = { cmd = "python -m ensurepip --upgrade" }
 install-build = { cmd = "python -m pip install --upgrade build twine" }
 build = { cmd = "python -m build" }
 
+# ----------------------------------------------------------------------
+# Tooling
+# ----------------------------------------------------------------------
 [tool.mypy]
 plugins = ["pydantic.mypy"]
 
@@ -60,7 +82,7 @@ plugins = ["pydantic.mypy"]
 fix = true
 line-length = 79
 indent-width = 4
-exclude = ["tests/*", "docs/*", "scripts/*", "test.py", "notebooks/*"]
+exclude = ["tests/*"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "D"]
