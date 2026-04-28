@@ -16,4 +16,59 @@ platforms = ["linux-64"]
 [tool.pixi.pypi-dependencies]
 simple_lumen = { path = ".", editable = true }
 
-[tool.pixi.tasks]
+[tool.pixi.dependencies]
+python = ">=3.11,<3.13"
+pydantic = ">=2.12.5,<3"
+xarray = ">=2026.1.0,<2027"
+numpy = ">=2.4.2,<3"
+colorlog = "*"
+structlog = ">=25.5.0,<26"
+pip = ">=26.0.1,<27"
+tqdm = ">=4.67.3,<5"
+matplotlib = ">=3.9"
+
+[tool.pixi.feature.gpu]
+system-requirements = { cuda = "12.6" }
+dependencies = { cuda-version = "12.6.*", cuda-cudart-dev = "12.6.*", cuda-nvcc = "12.6.*" }
+
+[tool.pixi.feature.dev.dependencies]
+pytest = ">=8.3"
+pytest-cov = ">=6.0"
+ruff = ">=0.11"
+pre-commit = ">=4.2"
+mypy = ">=1.5"
+scipy = "*"
+
+[tool.pixi.environments]
+gpu = ["gpu"]
+dev-gpu = ["dev", "gpu"]
+
+[tool.pixi.feature.dev.tasks]
+fmt = { cmd = "ruff format ." }
+lint = { cmd = "ruff check" }
+typecheck = { cmd = "mypy src/adjeff --strict" }
+test = { cmd = "pytest tests/ --cov" }
+all = { depends-on = ["fmt", "lint", "typecheck", "test"] }
+ensure-pip = { cmd = "python -m ensurepip --upgrade" }
+install-build = { cmd = "python -m pip install --upgrade build twine" }
+build = { cmd = "python -m build" }
+
+[tool.mypy]
+plugins = ["pydantic.mypy"]
+
+[tool.ruff]
+fix = true
+line-length = 79
+indent-width = 4
+exclude = ["tests/*", "docs/*", "scripts/*", "test.py", "notebooks/*"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "D"]
+fixable = ["ALL"]
+unfixable = []
+pydocstyle = { convention = "numpy" }
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+docstring-code-format = true
