@@ -2856,7 +2856,7 @@ packages:
 - pypi: ./
   name: simple-lumen
   version: 0.1.0
-  sha256: bdafec83db7da19feaacfefbdfa745d12bd190a93d63aa180bb7a3c7828a6321
+  sha256: 7a05b191e5f2b2455f172582a00736d3bcbe3449271dd3ddbe0b615cf763fd91
   requires_python: '>=3.11'
   editable: true
 - conda: https://conda.anaconda.org/conda-forge/noarch/six-1.17.0-pyhe01879c_1.conda

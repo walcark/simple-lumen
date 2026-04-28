@@ -46,7 +46,7 @@ dev-gpu = ["dev", "gpu"]
 [tool.pixi.feature.dev.tasks]
 fmt = { cmd = "ruff format ." }
 lint = { cmd = "ruff check" }
-typecheck = { cmd = "mypy src/adjeff --strict" }
+typecheck = { cmd = "mypy src/simple-lumen --strict" }
 test = { cmd = "pytest tests/ --cov" }
 all = { depends-on = ["fmt", "lint", "typecheck", "test"] }
 ensure-pip = { cmd = "python -m ensurepip --upgrade" }
